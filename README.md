@@ -44,5 +44,6 @@ python main.py
 - [x] Config-based customization (config.json)
 - [ ] Tunnel and request logging
 - [ ] User logging and authentication
-- [ ] TLS interception / MITM (optional toggle) (maybe)
+- [ ] Improved console logging via the logger class
 - [ ] Standalone mode - Compiled executable that executes ProxE in a console and allows configuration through terminal prompts when started.
+- [ ] TLS interception / MITM (optional toggle) (maybe)
