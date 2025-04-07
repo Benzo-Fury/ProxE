@@ -8,7 +8,10 @@
 
 <div align="center" styles="margin-top: 10px">
     <img src="https://img.shields.io/badge/open-source-brightgreen" />
-    <a href="https://wakatime.com/badge/user/562ef0a6-af5f-4e3d-b92f-23fc331558ea/project/77366a07-9ee3-414d-90a2-78da4e6fbfa1"><img src="https://wakatime.com/badge/user/562ef0a6-af5f-4e3d-b92f-23fc331558ea/project/77366a07-9ee3-414d-90a2-78da4e6fbfa1.svg" alt="wakatime"></a>
+    <a href="https://wakatime.com/badge/user/562ef0a6-af5f-4e3d-b92f-23fc331558ea/project/77366a07-9ee3-414d-90a2-78da4e6fbfa1">
+    <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-brightgreen" alt="License MIT" /></a>
+    <img src="https://wakatime.com/badge/user/562ef0a6-af5f-4e3d-b92f-23fc331558ea/project/77366a07-9ee3-414d-90a2-78da4e6fbfa1.svg" alt="wakatime"></a>
+    
 </div>
 
 
