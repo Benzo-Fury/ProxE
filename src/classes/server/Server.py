@@ -1,17 +1,22 @@
-from http.server import HTTPServer
-from classes.server.ReqHandler import ReqHandler
+from socketserver import TCPServer, ThreadingMixIn
+from classes.server.Request import Request
 from classes.local.Logger import Logger
 import time
 import config
 
-class Server(HTTPServer):
+from singletons.logger import logger
+
+class Server(ThreadingMixIn, TCPServer):
     """
+    Brains of the operation.
+    Handles process level logic and information.
     """
-    logger = Logger()
+    allow_reuse_address = True
+
     createdAt = time.time()
 
     def __init__(self):
-        super().__init__((config.ip, config.port), ReqHandler)
+        super().__init__((config.ip, config.port), Request)
 
     def serve(self):
         """
@@ -19,14 +24,14 @@ class Server(HTTPServer):
         Automatically manages the lifecycle and handles shutdown gracefully.
         """
         try:
-            self.logger.info(f"Server starting on IP {config.ip}:{config.port}")
+            logger.info(f"Server starting on IP {config.ip}:{config.port}")
             self.serve_forever()
         except KeyboardInterrupt:
-            self.logger.info("Shutdown requested by user.")
+            logger.info("Shutdown requested by user.")
         finally:
-            self.logger.info("Shutting down server...")
+            logger.info("Shutting down server...")
             self.stop()
-            self.logger.info("Server closed.")
+            logger.info("Server closed.")
 
     def stop(self):
         """
