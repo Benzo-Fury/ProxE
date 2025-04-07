@@ -12,7 +12,7 @@
 </div>
 
 
-## Features
+## Features 📦
 
 - 🔄 Supports HTTP and HTTPS tunneling 
 - ⚙️ Fully configurable
@@ -21,14 +21,14 @@
 - 🐍 Lightweight Python implementation with minimal dependencies
 - 🧪 Easily testable with raw sockets or browser proxy settings
 
-## How It Works
+## How It Works 🧠
 
 ProxE uses custom `Socket` and `Tunnel` classes to handle raw TCP connections. When an HTTP `CONNECT` request is received, a tunnel is formed and traffic is piped in both directions.
 
 Sockets use event driven architecture to handle their lifecycle and data transfer. Events like `bytes_received` and `close-request`, make it easy to hook into any part of the proxy process.
 
 
-## Getting Started
+## Getting Started 🚀
 
 ```bash
 git clone https://github.com/Benzo-Fury/ProxE
@@ -36,3 +36,13 @@ cd ProxE
 pip install -r requirements.txt
 python main.py
 ```
+
+## Planned Features 🛠️
+
+- [x] Event-based socket piping system
+- [x] HTTP and HTTPS (via CONNECT) support
+- [x] Config-based customization (config.json)
+- [ ] Tunnel and request logging
+- [ ] User logging and authentication
+- [ ] TLS interception / MITM (optional toggle) (maybe)
+- [ ] Standalone mode - Compiled executable that executes ProxE in a console and allows configuration through terminal prompts when started.
