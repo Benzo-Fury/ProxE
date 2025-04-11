@@ -1,7 +1,6 @@
 from socketserver import BaseRequestHandler
 from time import sleep
-import socket
-import select
+from base64 import b64decode
 
 # Types
 from typing import Literal, Optional, cast, Tuple, Dict
@@ -10,11 +9,15 @@ from _types.HttpMethod import HttpMethod
 # Custom
 from classes.server.Tunnel import Tunnel
 from classes.server.Socket import Socket
+from classes.db.User import User
 from singletons.logger import logger
 import config
 
-from threading import Thread
-
+end = "\r\n\r\n"
+responses = {
+    "connect-ok": f"HTTP/1.1 200 Connection Established{end}",
+    "auth-required": f"HTTP/1.1 407 Proxy Authentication Required\r\nProxy-Authenticate: Basic realm=\"ProxE\"\r\nContent-Length: 0{end}"
+}
 
 class Request(BaseRequestHandler):
     """
@@ -36,39 +39,52 @@ class Request(BaseRequestHandler):
         client_socket = Socket(self.request)
         logger.debug(f"{method} request received from {client_socket.address} aimed at {host}")
 
-        # Creating destination socket
+        # Handle authorization 
+        if config.authorization:
+            def invalid_auth():
+                client_socket.pipe(responses["auth-required"].encode())
+
+            if "proxy-authorization" in headers:
+                auth_header = headers["proxy-authorization"]
+                if not auth_header.startswith("Basic "):
+                    invalid_auth()
+                    return
+                
+                encoded = auth_header.split(" ", 1)[1]
+                decoded = b64decode(encoded).decode("utf-8")
+                username, password = decoded.split(":", 1)
+
+                user = User.get(username)
+
+                if not user:
+                    print("notauser")
+                    invalid_auth()
+                    return
+                
+                valid = user.authenticate(password, config.plain_text_passwords)
+
+                if not valid:
+                    print('notvalid')
+                    invalid_auth()
+                    return
+                
+                # User is now authenticated. 
+                # Should list them as "user" on the access log
+            else:
+                print('noauth')
+                invalid_auth()
+                return
+            
+        if method == "CONNECT":
+            client_socket.pipe(responses["connect-ok"].encode())
+            
+         # Creating destination socket
         destination_port = 443 if method == "CONNECT" else 80
         if ":" in host:
             # Overriding default port if one was provided
                 host, port_str = host.split(":")
                 destination_port = int(port_str)
         destination_socket = Socket(host=host, port=destination_port)
-
-        if method == "CONNECT":
-            client_socket.pipe(b"HTTP/1.1 200 Connection Established\r\n\r\n")
-
-        def pipe(src: socket.socket, dst: socket.socket):
-            try:
-                while True:
-                    data = src.recv(4096)
-                    if not data:
-                        break
-                    dst.sendall(data)
-            except Exception:
-                pass
-            finally:
-                src.close()
-                dst.close()
-
-        # Thread(target=pipe, args=(self.request, destination_socket)).start()
-        # Thread(target=pipe, args=(destination_socket, self.request)).start()          
-                
-        # Handle authorization 
-        # if config.authorization:
-        #     if "authorization" in headers:
-        #         # Do some autho stuff
-        #     else:
-        #         # Pipe back an issue
 
         # Tunnel will now take control over the sockets and manage them
         t = Tunnel(client_socket, destination_socket, method, buffer)

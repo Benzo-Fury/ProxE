@@ -1,0 +1,10 @@
+{
+    "_default": {},
+    "users": {
+      "1": {
+        "username": "benzo-fury",
+        "password": "$2a$..."
+      }
+    }
+  }
+  
