@@ -1,6 +1,9 @@
+import config
+
 class Logger:
     def debug(self, l: str): 
-        print(l)
+        if config.debug:
+            print(l)
 
     def info(self, l: str):
         print(l)

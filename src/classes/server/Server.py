@@ -1,6 +1,5 @@
 from socketserver import TCPServer, ThreadingMixIn
 from classes.server.Request import Request
-from classes.local.Logger import Logger
 import time
 import config
 

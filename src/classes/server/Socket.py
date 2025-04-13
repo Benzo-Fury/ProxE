@@ -68,7 +68,7 @@ class Socket(EventEmitter):
 
                     try:
                         data = self.receive() # Blocking - will except when .close() is called
-                        print(f"{len(data)}b worth of data received from {self.address}")
+                        logger.debug(f"{len(data)}b worth of data received from {self.address}")
                     except OSError as e:
                         if hasattr(e, "errno") and e.errno == WSAENOTSOCK:
                             self.closed = True
@@ -127,11 +127,11 @@ class Socket(EventEmitter):
         """
 
         if self.closed:
-            logger.error(f"Data was sent to a closed socket with address {self.address}")
+            logger.debug(f"Data was sent to a closed socket with address {self.address}")
             return
 
         try:
-            print(f"Piping {len(data)}b to {self.address}")
+            logger.debug(f"Piping {len(data)}b to {self.address}")
             self.base_socket.sendall(data, flags)
         except Exception as e:
             logger.error(f"Pipe error sending to {self.address} - {e}")
@@ -145,5 +145,4 @@ class Socket(EventEmitter):
 
 
     def on(self, event: event_name, listener: Callable[..., Any]): # type: ignore
-        print(f"Registered {event} on {self.address}")
         EventEmitter.on(self, event, listener)

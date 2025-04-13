@@ -2,16 +2,19 @@ from bcrypt import checkpw
 from tinydb import Query
 
 from classes.db.Document import Document
-from singletons.TinyDb import db
+from singletons.db import db
 
 class User(Document):
     """
         Extends the document class and represents a user stored in the db.
     """
 
-    table_name = "users"
+    @property
+    def table_name(self):
+        return"users"
 
     def __init__(self, username: str, hash: str):
+        super().__init__()
         self.username = username
         self.hash = hash
 

@@ -1,37 +1,38 @@
-from singletons.TinyDb import db
-from typing import Optional
+from abc import ABC, abstractmethod
+from singletons.db import db
 
-class Document:
+class Document(ABC):
     """
         Represents a base TinyDB document. 
         This class can be extended to include additional custom methods.
     """
-    table_name: Optional[str] = None  # to be set in subclass
+
+
+    @property
+    @abstractmethod
+    def table_name(self):
+        raise NotImplementedError("Should be implemented by sub class.")
+
 
     def __init__(self):
         self.id = None  # set on save
-        self.instance = self._get_instance()
 
 
     def save(self):
         data = self.to_dict()
+        table = db.table(self.table_name)
+
         if self.id:
-            self.instance.get_table(self.table_name).update(data, doc_ids=[self.id])
+            table.update(data, doc_ids=[self.id])
         else:
-            self.id = self.instance.get_table(self.table_name).insert(data)
+            self.id = table.insert(data)  # TinyDB returns the doc_id
+
 
 
     def delete(self):
         if self.id:
-            self.instance.get_table(self.table_name).remove(doc_ids=[self.id])
+            db.get_table(self.table_name).remove(doc_ids=[self.id])
 
 
     def to_dict(self) -> dict:
         raise NotImplementedError
-
-
-    def _get_instance(self):
-        if not db:
-            raise ValueError
-        
-        return db
